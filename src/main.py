@@ -24,7 +24,9 @@ curr_path, relative_path, *rest = sys.argv
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 abs_path = os.path.join(THIS_FOLDER, relative_path)
 
-file = open(abs_path)
-print(file.read())
-
-# client.send_message('me', str(datetime.datetime.now()))
+with open(abs_path) as file:
+    line = file.readline()
+    while line:
+       print(line.strip())
+       client.send_message('me', str(line))
+       line = file.readline()
