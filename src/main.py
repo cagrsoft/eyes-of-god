@@ -1,20 +1,30 @@
 import os
+import asyncio
+import datetime
+import sys
 from dotenv import load_dotenv
 from telethon import TelegramClient, events, sync
+from telethon.tl.functions.users import GetFullUserRequest
 
 load_dotenv()
 
-API_ID = 'API_ID'
-API_HASH = 'API_HASH'
+API_ID = 'TLG_API_ID'
+API_HASH = 'TLG_API_HASH'
 
-# These example values won't work. You must get your own api_id and
-# api_hash from https://my.telegram.org, under API Development.
-api_id = os.getenv(API_ID) # TODO: use this from process.env
-api_hash = os.getenv(API_HASH) # TODO: use this from process.env
+api_id = os.getenv(API_ID)
+api_hash = os.getenv(API_HASH)
 
 client = TelegramClient('anon', api_id, api_hash)
 client.start()
 
 # print(client.get_me().stringify())
 
-client.send_message('me', 'Test')
+curr_path, relative_path, *rest = sys.argv
+
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+abs_path = os.path.join(THIS_FOLDER, relative_path)
+
+file = open(abs_path)
+print(file.read())
+
+# client.send_message('me', str(datetime.datetime.now()))
