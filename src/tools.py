@@ -34,3 +34,12 @@ def get_line_count_in_file(file):
         print('Error:', str(e))
 
     return line_count
+
+def get_or_create_dotenv_var(key):
+    if key in os.environ: return os.getenv(key)
+    else:
+        value = input(f'Provide your {key}:')
+        with open(create_abs_path('../.env'), 'a') as file:
+            file.write(f'{key}={value}')
+            file.write('\n')
+    return value
