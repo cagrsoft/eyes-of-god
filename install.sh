@@ -36,5 +36,5 @@ rm -rf Python-3.9.1
 rm -rf Python-3.9.1.tgz
 
 # Now you can install other packages using pip
-~/$ROOT_TO_PYTHON/bin/python -m pip install dotenv
-~/$ROOT_TO_PYTHON/bin/python -m pip install telethon
+~/$ROOT_TO_PYTHON/bin/python -m pip install dotenv # TODO: THIS HAS TO WORK
+~/$ROOT_TO_PYTHON/bin/python -m pip install telethon # TODO: THIS HAS TO WORK
