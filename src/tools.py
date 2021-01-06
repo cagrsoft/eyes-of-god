@@ -23,6 +23,7 @@ def create_output_file_name():
     return name
 
 def get_line_count_in_file(file):
+    line_count = None
     try:
         file = open(file, "r")
         nonempty_lines = [line.strip("\n") for line in file if line != "\n"]
