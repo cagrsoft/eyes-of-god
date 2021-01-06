@@ -23,12 +23,13 @@ def create_output_file_name():
     return name
 
 def get_line_count_in_file(file):
-    file = open(file, "r")
-    nonempty_lines = [line.strip("\n") for line in file if line != "\n"]
+    try:
+        file = open(file, "r")
+        nonempty_lines = [line.strip("\n") for line in file if line != "\n"]
 
-    line_count = len(nonempty_lines)
-    file.close()
-
-    print(line_count)
+        line_count = len(nonempty_lines)
+        file.close()
+    except IOError:
+        print("Couldn't find the file input")
 
     return line_count
