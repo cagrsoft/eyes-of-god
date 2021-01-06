@@ -1,7 +1,10 @@
 # Eyes of god 👁👁
 
+## What is it
+
 Information lookup python script
-![eyes of god script](https://github.com/di-sukharev/eyes-of-god/blob/main/img/logo.png)
+
+![eyes of god script](https://github.com/di-sukharev/eyes-of-god/blob/main/img/logo.png =50x50)
 
 ## License
 
