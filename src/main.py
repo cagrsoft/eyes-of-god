@@ -8,21 +8,37 @@ from telethon.tl.functions.users import GetFullUserRequest
 
 load_dotenv()
 
+EyeGodsBot = 'EyeGodsBot'
+
 API_ID = 'TLG_API_ID'
 API_HASH = 'TLG_API_HASH'
 
-api_id = os.getenv(API_ID)
-api_hash = os.getenv(API_HASH)
-
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-EyeGodsBot = 'EyeGodsBot'
+create_abs_path = lambda file_name : os.path.join(THIS_FOLDER, file_name)
+file_name = None # contents are written in this file during the session
 
-# TODO change 'anon' to 'eyes-of-god'
-client = TelegramClient('eyes-of-god', api_id, api_hash)
+client = TelegramClient('eyes-of-god', os.getenv(API_ID), os.getenv(API_HASH))
+
+def create_output_file_name():
+    # if global file_name is already created in this session, then use it
+    global file_name
+    if file_name: return file_name
+
+    default_file_name = 'output.txt'
+    name = default_file_name
+
+    i = 1
+    while os.path.exists(create_abs_path(name)):
+        name = f'{i}-{default_file_name}'
+        i += 1
+    
+    file_name = name
+
+    return name
 
 async def search_contacts_from_file():
-    _, file_name, *rest = sys.argv
-    abs_path = os.path.join(THIS_FOLDER, file_name)
+    _, input_file_name = sys.argv
+    abs_path = os.path.join(THIS_FOLDER, input_file_name)
     
     with open(abs_path, 'r') as file:
         line = file.readline()
@@ -31,24 +47,30 @@ async def search_contacts_from_file():
             line = file.readline()
             await asyncio.sleep(1) # TODO: add some sleep not to block tlg account
 
-async def main():
-    await client.start()
-    await search_contacts_from_file()
-    await client.run_until_disconnected()
-    # TODO client.disconnect() when all responses are back
-
-# print(client.get_me().stringify())
-
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 async def handler(event):
-    # print(event.message.message)
-    abs_path = os.path.join(THIS_FOLDER, 'output.txt')
+    msg = event.message.message
+    # print(msg)
+
+    # ignore all meta messages, except those which have 'Номер'
+    if not 'Номер' in msg: return
+    
+    abs_path = create_abs_path(create_output_file_name())
     with open(abs_path, 'a') as file:
-        msg = event.message.message
-        print(msg)
         lines = msg.split('\n')
-        only_needed_data = [l for l in lines if 'Номер' in l or 'Telegram' in l or 'Email' in l]
-        await file.write('—'.join(only_needed_data))
+        for l in lines:
+            if 'Номер' in l or 'Telegram' in l or 'Email' in l:
+                await file.write(msg)
+                await file.write(' | ')
+        await file.write('\n')
+    
+    # TODO client.disconnect() when all responses are back
+
+async def main():
+    await client.start()
+
+    await search_contacts_from_file()
+    await client.run_until_disconnected()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
