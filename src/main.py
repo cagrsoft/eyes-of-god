@@ -2,6 +2,7 @@ import os
 import asyncio
 import datetime
 import sys
+import tools
 from dotenv import load_dotenv
 from telethon import TelegramClient, events, sync
 from telethon.tl.functions.users import GetFullUserRequest
@@ -13,34 +14,15 @@ EyeGodsBot = 'EyeGodsBot'
 API_ID = 'TLG_API_ID'
 API_HASH = 'TLG_API_HASH'
 
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-create_abs_path = lambda file_name : os.path.join(THIS_FOLDER, file_name)
-file_name = None # contents are written in this file during the session
+_, input_file_name = sys.argv
+abs_path_to_input_file = tools.create_abs_path(input_file_name)
+abs_path_to_output_file = tools.create_abs_path(tools.create_output_file_name())
+contacts_left_to_search = tools.get_line_count_in_file(abs_path_to_input_file)    
 
 client = TelegramClient('eyes-of-god', os.getenv(API_ID), os.getenv(API_HASH))
 
-def create_output_file_name():
-    # if global file_name is already created in this session, then use it
-    global file_name
-    if file_name: return file_name
-
-    default_file_name = 'output.txt'
-    name = default_file_name
-
-    i = 1
-    while os.path.exists(create_abs_path(name)):
-        name = f'{i}-{default_file_name}'
-        i += 1
-    
-    file_name = name
-
-    return name
-
 async def search_contacts_from_file():
-    _, input_file_name = sys.argv
-    abs_path = os.path.join(THIS_FOLDER, input_file_name)
-    
-    with open(abs_path, 'r') as file:
+    with open(abs_path_to_input_file, 'r') as file:
         line = file.readline()
         while line:
             await client.send_message(EyeGodsBot, str(line))
@@ -55,20 +37,17 @@ async def handler(event):
     # ignore all meta messages, except those which have 'Номер'
     if not 'Номер' in msg: return
     
-    abs_path = create_abs_path(create_output_file_name())
-    with open(abs_path, 'a') as file:
-        lines = msg.split('\n')
-        for l in lines:
-            if 'Номер' in l or 'Telegram' in l or 'Email' in l:
-                await file.write(msg)
-                await file.write(' | ')
-        await file.write('\n')
+    with open(abs_path_to_output_file, 'a') as file:
+        await file.write(msg)
     
-    # TODO client.disconnect() when all responses are back
+    # # disconnect when all responses are received and no contacts left to search
+    # global contacts_left_to_search
+    # contacts_left_to_search -= 1
+    # print(contacts_left_to_search)
+    # if contacts_left_to_search == 0: client.disconnect()
 
 async def main():
     await client.start()
-
     await search_contacts_from_file()
     await client.run_until_disconnected()
 
