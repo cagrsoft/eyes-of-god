@@ -29,7 +29,7 @@ def get_line_count_in_file(file):
 
         line_count = len(nonempty_lines)
         file.close()
-    except IOError:
-        print("Couldn't find the file input")
+    except Exception as e:
+        print('Error:', str(e))
 
     return line_count

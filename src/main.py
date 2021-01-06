@@ -22,34 +22,43 @@ contacts_left_to_search = tools.get_line_count_in_file(abs_path_to_input_file)
 client = TelegramClient('eyes-of-god', os.getenv(API_ID), os.getenv(API_HASH))
 
 async def search_contacts_from_file():
-    with open(abs_path_to_input_file, 'r') as file:
-        line = file.readline()
-        while line:
-            await client.send_message(EyeGodsBot, str(line))
+    try:
+        with open(abs_path_to_input_file, 'r') as file:
             line = file.readline()
-            await asyncio.sleep(1) # TODO: add some sleep not to block tlg account
+            while line:
+                await client.send_message(EyeGodsBot, str(line))
+                line = file.readline()
+                await asyncio.sleep(1) # TODO: add some sleep not to block tlg account
+    except Exception as e:
+        print('Error:', str(e))
 
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 async def handler(event):
     msg = event.message.message
     # print(msg)
 
-    # ignore all meta messages, except those which have 'Номер'
+    # ignore all messages, except those which have 'Номер'
     if not 'Номер' in msg: return
-    
-    with open(abs_path_to_output_file, 'a') as file:
-        await file.write(msg)
-    
-    # # disconnect when all responses are received and no contacts left to search
-    # global contacts_left_to_search
-    # contacts_left_to_search -= 1
-    # print(contacts_left_to_search)
-    # if contacts_left_to_search == 0: client.disconnect()
+
+    try:
+        with open(abs_path_to_output_file, 'a+') as file: file.write(msg)
+    except Exception as e:
+        print('Error:', str(e))
+
+    # disconnect when all responses are received and no contacts left to search
+    global contacts_left_to_search
+    print(contacts_left_to_search)
+    contacts_left_to_search -= 1
+    if contacts_left_to_search == 0: await client.disconnect()
 
 async def main():
-    await client.start()
-    await search_contacts_from_file()
-    await client.run_until_disconnected()
+    try:
+        await client.start()
+        await search_contacts_from_file()
+        await client.run_until_disconnected()
+    except:
+        await client.disconnect()
+        print('OMG!! 😱😱 Something went wrong! Okey, don\'t panic, just try one more time')
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
