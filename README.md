@@ -4,7 +4,7 @@
 
 Information lookup python script
 
-![eyes of god script](https://github.com/di-sukharev/eyes-of-god/blob/main/img/logo.png | width=50)
+![eyes of god script](https://github.com/di-sukharev/eyes-of-god/blob/main/img/logo.png)
 
 ## License
 
