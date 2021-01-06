@@ -29,7 +29,7 @@ async def search_contacts_from_file():
                 print('👁 ', 'Searching:', line)
                 await client.send_message(EyeGodsBot, str(line))
                 line = file.readline()
-                await asyncio.sleep(1) # TODO: add some sleep not to block tlg account
+                await asyncio.sleep(1)
     except Exception as e:
         print('Error:', str(e))
 
