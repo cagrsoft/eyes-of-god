@@ -29,7 +29,7 @@ async def search_contacts_from_file():
         with open(abs_path_to_input_file, 'r') as file:
             line = file.readline()
             while line:
-                print('👁👁 ', 'Searching:', line)
+                print(' 👁 👁 ', 'Searching:', line)
                 await client.send_message(EyeGodsBot, str(line))
                 line = file.readline()
                 await asyncio.sleep(1)
@@ -44,7 +44,7 @@ async def handler(event):
     if not 'Номер' in msg: return
 
     try:
-        with open(abs_path_to_output_file, 'a+') as file: file.write(msg)
+        with open(abs_path_to_output_file, 'a') as file: file.write(msg)
     except Exception as e:
         print('Error:', str(e))
 
