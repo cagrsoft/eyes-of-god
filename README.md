@@ -19,3 +19,5 @@ LICENSE is available near this file, at the same folder.
 2. Open terminal in `eyes-of-god/src` folder
 3. Run `python ./main.py input.txt` to run the script
 4. See search results in `src/output.txt` file
+
+Use this code with wisdom and always remember that “With great power comes great responsibility.” © Ben Parker, uncle of Peter Parker who is the spider man. Yeah.. Be carefull.
