@@ -26,6 +26,7 @@ async def search_contacts_from_file():
         with open(abs_path_to_input_file, 'r') as file:
             line = file.readline()
             while line:
+                print('👁 ', 'Searching:', line)
                 await client.send_message(EyeGodsBot, str(line))
                 line = file.readline()
                 await asyncio.sleep(1) # TODO: add some sleep not to block tlg account
@@ -35,7 +36,6 @@ async def search_contacts_from_file():
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 async def handler(event):
     msg = event.message.message
-    # print(msg)
 
     # ignore all messages, except those which have 'Номер'
     if not 'Номер' in msg: return
@@ -47,7 +47,6 @@ async def handler(event):
 
     # disconnect when all responses are received and no contacts left to search
     global contacts_left_to_search
-    print(contacts_left_to_search)
     contacts_left_to_search -= 1
     if contacts_left_to_search == 0: await client.disconnect()
 
@@ -56,8 +55,9 @@ async def main():
         await client.start()
         await search_contacts_from_file()
         await client.run_until_disconnected()
-    except:
+    except Exception as e:
         await client.disconnect()
+        print('Error:', str(e))
         print('OMG!! 😱😱 Something went wrong! Okey, don\'t panic, just try one more time')
 
 if __name__ == '__main__':
