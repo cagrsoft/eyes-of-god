@@ -1,15 +1,18 @@
 # Eyes of god 👁👁
 
-## What is it
+## What is this
 
-Information lookup python script
+“Eyes of god” is an information lookup python script.
+You provide phone numbers and get more information on this numbers if any is available.
 
-![eyes of god script](https://github.com/di-sukharev/eyes-of-god/blob/main/img/logo.png)
+This program is based on @EyeGodsBot telegram bot and is an intermediary between user and @EyeGodsBot.
 
 ## License
 
 Reading this file means you have accepted the LICENSE.
 LICENSE is available near this file, at the same folder.
+
+![eyes of god script](https://github.com/di-sukharev/eyes-of-god/blob/main/img/logo.png)
 
 ## Pre-installation of used phone number (skip if you know nothing about it)
 
