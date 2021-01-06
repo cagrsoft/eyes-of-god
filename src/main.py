@@ -10,6 +10,7 @@ from telethon.tl.functions.users import GetFullUserRequest
 load_dotenv()
 
 EyeGodsBot = 'EyeGodsBot'
+SEPARATOR = '\n\n------------\n\n'
 
 API_ID = 'TLG_API_ID'
 API_HASH = 'TLG_API_HASH'
@@ -29,7 +30,7 @@ async def search_contacts_from_file():
         with open(abs_path_to_input_file, 'r') as file:
             line = file.readline()
             while line:
-                print(' 👁 👁 ', 'Searching:', line)
+                print('👁 👁','Searching:', line)
                 await client.send_message(EyeGodsBot, str(line))
                 line = file.readline()
                 await asyncio.sleep(1)
@@ -44,7 +45,7 @@ async def handler(event):
     if not 'Номер' in msg: return
 
     try:
-        with open(abs_path_to_output_file, 'a') as file: file.write(msg)
+        with open(abs_path_to_output_file, 'a') as file: file.write(msg + SEPARATOR)
     except Exception as e:
         print('Error:', str(e))
 
@@ -58,7 +59,7 @@ async def main():
         await client.start()
         await search_contacts_from_file()
         await client.run_until_disconnected()
-        print('Done. Results are in', abs_path_to_output_file)
+        print('Done. Results are in: ', abs_path_to_output_file)
     except Exception as e:
         await client.disconnect()
         print('Error:', str(e))
