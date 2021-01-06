@@ -18,7 +18,7 @@ THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 EyeGodsBot = 'EyeGodsBot'
 
 # TODO change 'anon' to 'eyes-of-god'
-client = TelegramClient('anon', api_id, api_hash)
+client = TelegramClient('eyes-of-god', api_id, api_hash)
 
 async def search_contacts_from_file():
     _, file_name, *rest = sys.argv
@@ -42,15 +42,15 @@ async def main():
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 async def handler(event):
     # print(event.message.message)
-    abs_path = os.path.join(THIS_FOLDER, 'result.txt')
+    abs_path = os.path.join(THIS_FOLDER, 'output.txt')
     with open(abs_path, 'a') as file:
-        lines = event.message.message.slit('\n')
-        print('lines')
-        only_needed_data = [l for l in lines if 'Номер' in l]
-        print('only_needed_data', only_needed_data)
-        await file.write(f'{only_needed_data}\n')
+        msg = event.message.message
+        print(msg)
+        lines = msg.split('\n')
+        only_needed_data = [l for l in lines if 'Номер' in l or 'Telegram' in l or 'Email' in l]
+        await file.write('—'.join(only_needed_data))
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    print('Press Ctrl+C to stop the script')
+    print('Press Ctrl+C to stop the script, if needed')
     loop.run_until_complete(main())
