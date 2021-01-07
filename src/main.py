@@ -31,9 +31,9 @@ async def search_contacts_from_file():
             line = file.readline()
             while line:
                 print('👁 👁','Searching:', line)
-                await client.send_message(EyeGodsBot, str(line))
+                await client.send_message(EyeGodsBot, str('/tg ' + line))
                 line = file.readline()
-                await asyncio.sleep(1)
+                await asyncio.sleep(3)
     except Exception as e:
         print('Error:', str(e))
 
@@ -42,7 +42,7 @@ async def handler(event):
     msg = event.message.message
 
     # ignore all messages, except those which have 'Номер'
-    if not 'Номер' in msg: return
+    if not 'Telegram' in msg: return
 
     try:
         with open(abs_path_to_output_file, 'a') as file: file.write(msg + SEPARATOR)
