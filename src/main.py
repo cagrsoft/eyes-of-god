@@ -3,6 +3,7 @@ import asyncio
 import datetime
 import sys
 import tools
+import re
 from dotenv import load_dotenv
 from telethon import TelegramClient, events, sync
 from telethon.tl.functions.users import GetFullUserRequest
@@ -10,7 +11,6 @@ from telethon.tl.functions.users import GetFullUserRequest
 load_dotenv()
 
 EyeGodsBot = 'EyeGodsBot'
-SEPARATOR = '\n\n------------\n\n'
 
 API_ID = 'TLG_API_ID'
 API_HASH = 'TLG_API_HASH'
@@ -18,8 +18,7 @@ API_HASH = 'TLG_API_HASH'
 api_id = tools.get_or_create_dotenv_var(API_ID)
 api_hash = tools.get_or_create_dotenv_var(API_HASH)
 
-_, input_file_name = sys.argv
-abs_path_to_input_file = tools.create_abs_path(input_file_name)
+abs_path_to_input_file = tools.create_abs_path('input.txt')
 abs_path_to_output_file = tools.create_abs_path(tools.create_output_file_name())
 contacts_left_to_search = tools.get_line_count_in_file(abs_path_to_input_file)    
 
@@ -43,14 +42,14 @@ async def search_contacts_from_file():
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 async def handler(event):
     msg = event.message.message
-
     print(msg)
 
-    # ignore all messages, except those which have 'Номер'
-    if not 'Telegram' in msg: return
+    phone = re.search(r"7\d{10}", msg)
+    if phone: phone = phone.group()
+    else: return
 
     try:
-        with open(abs_path_to_output_file, 'a') as file: file.write(msg + SEPARATOR)
+        with open(abs_path_to_output_file, 'a') as file: file.write('+' + phone + '\n')
     except Exception as e:
         print('Error:', str(e))
 
