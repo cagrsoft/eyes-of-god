@@ -1,3 +1,4 @@
+*output.txt
 .DS_store
 .env
 *.session
