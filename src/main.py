@@ -25,7 +25,9 @@ contacts_left_to_search = tools.get_line_count_in_file(abs_path_to_input_file)
 
 client = TelegramClient('eyes-of-god', api_id, api_hash)
 
+delay = 6
 async def search_contacts_from_file():
+    global delay
     try:
         with open(abs_path_to_input_file, 'r') as file:
             line = file.readline()
@@ -33,13 +35,16 @@ async def search_contacts_from_file():
                 print('👁 👁','Searching:', line)
                 await client.send_message(EyeGodsBot, str('/tg ' + line))
                 line = file.readline()
-                await asyncio.sleep(3)
+                await asyncio.sleep(delay)
+                delay += 1
     except Exception as e:
         print('Error:', str(e))
 
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 async def handler(event):
     msg = event.message.message
+
+    print(msg)
 
     # ignore all messages, except those which have 'Номер'
     if not 'Telegram' in msg: return
