@@ -34,7 +34,7 @@ Remember that your API hash is secret and Telegram won’t let you revoke it. Do
 ## How to use
 
 1. Add contacts to search for in `/src/input.txt` file
-2. Open terminal in `eyes-of-god/src` folder
+2. Open terminal in `eyes-of-god/src` folder (ATTENTION! you must open terminal exactly in `eyes-of-god/src` folder, to check where you are run `pwd`)
 3. Run `python ./main.py input.txt` to run the script
 4. Provide **used phone number**, **TLG_API_ID** and **TLG_API_HASH** which were created at pre-installation step
 5. See search results in `src/output.txt` file
