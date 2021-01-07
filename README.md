@@ -3,7 +3,7 @@
 ## What is this
 
 “Eyes of god” is an information lookup python script.
-You provide phone numbers and get more information on this numbers if any is available.
+You provide tlg nickname and get more information on this nickname if any is available.
 
 This program is based on @EyeGodsBot telegram bot and is an intermediary between user and @EyeGodsBot.
 
@@ -29,13 +29,13 @@ Remember that your API hash is secret and Telegram won’t let you revoke it. Do
 
 1. Install latest python from https://www.python.org/downloads/
 2. Open terminal
-3. Run `python -m pip install dotenv telethon`
+3. Run `python3 -m pip install dotenv telethon`
 
 ## How to use
 
-1. Add contacts to search for in `/src/input.txt` file
+1. Add telegram nicknames to search for in `/src/input.txt` file
 2. Open terminal in `eyes-of-god/src` folder (ATTENTION! you must open terminal exactly in `eyes-of-god/src` folder, to check where you are run `pwd`)
-3. Run `python ./main.py input.txt` to run the script
+3. Run `python3 ./main.py input.txt` to run the script
 4. Provide **used phone number**, **TLG_API_ID** and **TLG_API_HASH** which were created at pre-installation step
 5. See search results in `src/output.txt` file
 
