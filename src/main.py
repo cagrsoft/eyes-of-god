@@ -4,6 +4,7 @@ import datetime
 import sys
 import tools
 import re
+import xlsxwriter
 from dotenv import load_dotenv
 from telethon import TelegramClient, events, sync
 from telethon.tl.functions.users import GetFullUserRequest
@@ -58,13 +59,17 @@ async def start_search():
             contacts_to_search = file.readlines()
             if len(contacts_to_search) == 0:
                 raise Exception("input.txt file is either empty or doesn't exist.")
+            # else: worksheet.set_column('A:A', contacts_to_search)
     except Exception as e: raise e
 
     await search_next_contact()
 
+current_cell_to_write = 0
 def write_to_output_file(phone):
+    global current_cell_to_write
     try:
-        with open(abs_path_to_output_file, "a") as file: file.write("+" + phone + "\n")
+        worksheet.write(current_cell_to_write, 0, "+" + phone + "\n")
+        current_cell_to_write += 1
     except Exception as e: raise e
 
 @client.on(events.NewMessage(from_users=EyeGodsBot))
@@ -89,7 +94,12 @@ async def handler(event):
     except Exception as e: raise e
 
 async def main():
+    global worksheet, workbook
     try:
+        # Create an new Excel file and add a worksheet.
+        workbook = xlsxwriter.Workbook(abs_path_to_output_file)
+        worksheet = workbook.add_worksheet()
+
         await client.start()
         await start_search()
         await client.run_until_disconnected()
@@ -99,7 +109,12 @@ async def main():
         print("Something went wrong 😱😱 Okey, don't panic, just try one more time and hope this message dissapears")
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    print("Started searching 🔦 \n")
-    print("Press Ctrl+C to stop the script, if needed \n")
-    loop.run_until_complete(main())
+    try: 
+        loop = asyncio.get_event_loop()
+        print("\n Started searching 🔦 \n")
+        print("Press Ctrl+C to stop the script, if needed \n")
+        loop.run_until_complete(main())
+    except (Exception, KeyboardInterrupt) as e:
+        print("Script has been stopped manually")
+    finally:
+        workbook.close()

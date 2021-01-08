@@ -10,7 +10,7 @@ def create_output_file_name():
     global file_name
     if file_name: return file_name
 
-    default_file_name = 'output.txt'
+    default_file_name = 'output.xlsx'
     name = default_file_name
 
     i = 1
