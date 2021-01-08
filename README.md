@@ -29,7 +29,7 @@ Remember that your API hash is secret and Telegram won’t let you revoke it. Do
 
 1. Install latest python from https://www.python.org/downloads/
 2. Open terminal
-3. Run `python3 -m pip install dotenv telethon`
+3. Run `python3 -m pip install dotenv telethon XlsxWriter`
 
 ## How to use
 
@@ -37,7 +37,7 @@ Remember that your API hash is secret and Telegram won’t let you revoke it. Do
 2. Open terminal in `eyes-of-god/src` folder (ATTENTION! you must open terminal exactly in `eyes-of-god/src` folder, to check where you are run `pwd`)
 3. Run `python3 main.py` to run the script
 4. Provide **used phone number**, **TLG_API_ID** and **TLG_API_HASH** which were created at pre-installation step
-5. See search results in `src/output.txt` file
+5. See search results in `src/output.xlsx` file
 
 ## Any questions
 
