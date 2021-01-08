@@ -16,23 +16,23 @@ LICENSE is available near this file, at the same folder.
 
 1. Login to your [Telegram account](https://my.telegram.org/auth) with the phone number of the developer account to use.
 2. Click under API Development tools.
-3. A Create new application window will appear. Fill in your application details. There is no need to enter any URL, and only the first two fields (App title and Short name) can currently be changed later.
+3. A “Create new application” window will appear. Fill in your application details. There is no need to enter any URL, and only the first two fields (App title and Short name) can currently be changed later.
 4. Click on Create application at the end.
 
-### Important
+### Important 👋
 
 Remember that your API hash is secret and Telegram won’t let you revoke it. Don’t post it anywhere!
 
 ## Installation
 
 1. Install latest python from https://www.python.org/downloads/
-2. Open terminal
-3. Run `python3 -m pip install dotenv telethon XlsxWriter`
+2. Open terminal (terminal or console is that black hacker's window where you write commands)
+3. Run command `python3 -m pip install dotenv telethon XlsxWriter` (this will install dependencies which are used in the script)
 
 ## How to use
 
-1. Add telegram nicknames to search for in `/src/input.txt` file
-2. Open terminal in `eyes-of-god/src` folder (ATTENTION! you must open terminal exactly in `eyes-of-god/src` folder, to check where you are run `pwd`)
+1. Add telegram nicknames to search for in `/src/input.txt` file (start nicknames with '@' symbol, every nickname should start with a new line, you can also search by 'telegram id')
+2. Open terminal in `eyes-of-god/src` folder (ATTENTION! you must open terminal exactly in `eyes-of-god/src` folder, to check where you are run command `pwd`)
 3. Run `python3 main.py` to run the script
 4. Provide **used phone number**, **TLG_API_ID** and **TLG_API_HASH** which were created at pre-installation step
 5. See search results in `src/output.xlsx` file
