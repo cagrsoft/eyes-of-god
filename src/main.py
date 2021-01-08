@@ -24,21 +24,25 @@ abs_path_to_output_file = tools.create_abs_path(tools.create_output_file_name())
 
 client = TelegramClient("eyes-of-god", api_id, api_hash)
 
+
 async def search_contact(contact):
     if len(contact) < 5 or len(contact) > 32:
         raise Exception("@username must be from 5 to 32 symbols long")
-    
+
     global currently_searched_contact
     currently_searched_contact = contact
 
     print("👁 👁", "Searching:", contact)
     await client.send_message(EyeGodsBot, str("/tg " + currently_searched_contact))
 
+
 async def repeat_search():
     try:
         global currently_searched_contact
         await search_contact(currently_searched_contact)
-    except Exception as e: raise e
+    except Exception as e:
+        raise e
+
 
 async def search_next_contact():
     global contacts_to_search
@@ -47,9 +51,12 @@ async def search_next_contact():
         if len(contacts_to_search) == 0:
             print("\nDone. Results are in: ", abs_path_to_output_file)
             await client.disconnect()
-        else: await search_contact(contacts_to_search.pop())
-    except Exception as e: raise e
-    
+        else:
+            await search_contact(contacts_to_search.pop())
+    except Exception as e:
+        raise e
+
+
 async def start_search():
     global contacts_to_search
     contacts_to_search = []
@@ -58,9 +65,11 @@ async def start_search():
         with open(abs_path_to_input_file, "r") as file:
             contacts_to_search = file.readlines()
             if len(contacts_to_search) == 0:
-                raise Exception("input.txt file is either empty or doesn't exist.")
+                raise Exception(
+                    "input.txt file is either empty or doesn't exist.")
             # else: worksheet.set_column('A:A', contacts_to_search)
-    except Exception as e: raise e
+    except Exception as e:
+        raise e
 
     await search_next_contact()
 
@@ -70,7 +79,9 @@ def write_to_output_file(phone):
     try:
         worksheet.write(current_cell_to_write, 0, "+" + phone + "\n")
         current_cell_to_write += 1
-    except Exception as e: raise e
+    except Exception as e:
+        raise e
+
 
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 @client.on(events.MessageEdited(from_users=EyeGodsBot))
@@ -91,7 +102,9 @@ async def handler(event):
             delay = re.search(r"Повторите через (\d)", msg)
             await asyncio.sleep(int(delay.group(1)) + 1)
             await repeat_search()
-    except Exception as e: raise e
+    except Exception as e:
+        raise e
+
 
 async def main():
     global worksheet, workbook
@@ -109,12 +122,12 @@ async def main():
         print("Something went wrong 😱😱 Okey, don't panic, just try one more time and hope this message dissapears")
 
 if __name__ == "__main__":
-    try: 
+    try:
         loop = asyncio.get_event_loop()
         print("\n Started searching 🔦 \n")
         print("Press Ctrl+C to stop the script, if needed \n")
         loop.run_until_complete(main())
     except (Exception, KeyboardInterrupt) as e:
-        print("Script has been stopped manually")
+        print("\n Script has been stopped manually")
     finally:
         workbook.close()
