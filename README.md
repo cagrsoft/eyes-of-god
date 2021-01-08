@@ -22,7 +22,7 @@ Remember that your API hash is secret and Telegram won’t let you revoke it. Do
 
 1. Install latest python from https://www.python.org/downloads/
 2. Open terminal (terminal or console is that black hacker's window where you write commands)
-3. Run command `python3 -m pip install dotenv telethon XlsxWriter` (this will install dependencies which are used in the script)
+3. Run command `python3 -m pip install python-dotenv telethon XlsxWriter` (this will install dependencies which are used in the script)
 
 ## How to use
 
