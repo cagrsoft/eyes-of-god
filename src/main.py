@@ -24,7 +24,7 @@ contacts_left_to_search = tools.get_line_count_in_file(abs_path_to_input_file)
 
 client = TelegramClient('eyes-of-god', api_id, api_hash)
 
-delay = 6
+delay = 7
 async def search_contacts_from_file():
     global delay
     try:
