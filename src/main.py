@@ -10,66 +10,96 @@ from telethon.tl.functions.users import GetFullUserRequest
 
 load_dotenv()
 
-EyeGodsBot = 'EyeGodsBot'
+EyeGodsBot = "EyeGodsBot"
 
-API_ID = 'TLG_API_ID'
-API_HASH = 'TLG_API_HASH'
+API_ID = "TLG_API_ID"
+API_HASH = "TLG_API_HASH"
 
 api_id = tools.get_or_create_dotenv_var(API_ID)
 api_hash = tools.get_or_create_dotenv_var(API_HASH)
 
-abs_path_to_input_file = tools.create_abs_path('input.txt')
+abs_path_to_input_file = tools.create_abs_path("input.txt")
 abs_path_to_output_file = tools.create_abs_path(tools.create_output_file_name())
-contacts_left_to_search = tools.get_line_count_in_file(abs_path_to_input_file)    
 
-client = TelegramClient('eyes-of-god', api_id, api_hash)
+client = TelegramClient("eyes-of-god", api_id, api_hash)
 
-delay = 7
-async def search_contacts_from_file():
-    global delay
+async def search_contact(contact):
+    if len(contact) < 5 or len(contact) > 32:
+        raise Exception("@username must be from 5 to 32 symbols long")
+    
+    global currently_searched_contact
+    currently_searched_contact = contact
+
+    print("👁 👁", "Searching:", contact)
+    await client.send_message(EyeGodsBot, str("/tg " + currently_searched_contact))
+
+async def repeat_search():
     try:
-        with open(abs_path_to_input_file, 'r') as file:
-            line = file.readline()
-            while line:
-                print('👁 👁','Searching:', line)
-                await client.send_message(EyeGodsBot, str('/tg ' + line))
-                line = file.readline()
-                await asyncio.sleep(delay)
-                delay += 1
-    except Exception as e:
-        print('Error:', str(e))
+        global currently_searched_contact
+        await search_contact(currently_searched_contact)
+    except Exception as e: raise e
+
+async def search_next_contact():
+    global contacts_to_search
+    try:
+        # disconnect when all responses are received and no contacts_to_search left to search
+        if len(contacts_to_search) == 0:
+            print("\nDone. Results are in: ", abs_path_to_output_file)
+            await client.disconnect()
+        else: await search_contact(contacts_to_search.pop())
+    except Exception as e: raise e
+    
+async def start_search():
+    global contacts_to_search
+    contacts_to_search = []
+
+    try:
+        with open(abs_path_to_input_file, "r") as file:
+            contacts_to_search = file.readlines()
+            if len(contacts_to_search) == 0:
+                raise Exception("input.txt file is either empty or doesn't exist.")
+    except Exception as e: raise e
+
+    await search_next_contact()
+
+def write_to_output_file(phone):
+    try:
+        with open(abs_path_to_output_file, "a") as file: file.write("+" + phone + "\n")
+    except Exception as e: raise e
 
 @client.on(events.NewMessage(from_users=EyeGodsBot))
+@client.on(events.MessageEdited(from_users=EyeGodsBot))
 async def handler(event):
     msg = event.message.message
     print(msg)
 
-    phone = re.search(r"7\d{10}", msg)
-    if phone: phone = phone.group()
-    else: return
-
     try:
-        with open(abs_path_to_output_file, 'a') as file: file.write('+' + phone + '\n')
-    except Exception as e:
-        print('Error:', str(e))
-
-    # disconnect when all responses are received and no contacts left to search
-    global contacts_left_to_search
-    contacts_left_to_search -= 1
-    if contacts_left_to_search == 0: await client.disconnect()
+        phone = re.search(r"7\d{10}", msg)
+        if phone:
+            write_to_output_file(phone.group())
+            await search_next_contact()
+        elif 'Telegram' in msg:
+            await search_next_contact()
+        elif "Данный логин не принадлежит пользователю." in msg:
+            await search_next_contact()
+        elif "Вы слишком часто выполняете это действие." in msg:
+            delay = re.search(r"Повторите через (\d)", msg)
+            await asyncio.sleep(int(delay.group(1)) + 1)
+            await repeat_search()
+    except Exception as e: raise e
 
 async def main():
     try:
         await client.start()
-        await search_contacts_from_file()
+        await start_search()
         await client.run_until_disconnected()
-        print('Done. Results are in: ', abs_path_to_output_file)
     except Exception as e:
         await client.disconnect()
-        print('Error:', str(e))
-        print('Something went wrong 😱😱 Okey, don\'t panic, just try one more time and hope this message dissapears')
+        print("Error:", str(e))
+        print("Something went wrong 😱😱 Okey, don't panic, just try one more time and hope this message dissapears")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    print('Press Ctrl+C to stop the script, if needed')
+    print("Started searching 🔦 \n")
+    print("Press Ctrl+C to stop the script, if needed \n")
     loop.run_until_complete(main())
