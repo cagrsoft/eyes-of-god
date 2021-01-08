@@ -1,7 +1,5 @@
 # Eyes of god 👁👁
 
-## What is this
-
 “Eyes of god” is an information lookup python script.
 You provide tlg nickname and get more information on this nickname if any is available.
 
