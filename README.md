@@ -5,11 +5,6 @@ You provide tlg nickname and get more information on this nickname if any is ava
 
 This program is based on @EyeGodsBot telegram bot and is an intermediary between user and @EyeGodsBot.
 
-## License
-
-Reading this file means you have accepted the LICENSE.
-LICENSE is available near this file, at the same folder.
-
 ![eyes of god script](https://github.com/di-sukharev/eyes-of-god/blob/main/img/logo.png)
 
 ## Pre-installation of used phone number (skip if you know nothing about it)
@@ -44,3 +39,8 @@ For more information go to https://docs.telethon.dev/en/latest/basic/installatio
 ### Something more
 
 Use this code with wisdom and always remember that “With great power comes great responsibility.” © Ben Parker, uncle of Peter Parker who is the spider man. Yeah.. Be carefull.
+
+## License
+
+Reading this file means you have accepted the LICENSE.
+LICENSE is available near this file, at the same folder.
