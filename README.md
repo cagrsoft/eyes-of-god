@@ -24,6 +24,8 @@ Remember that your API hash is secret and Telegram won’t let you revoke it. Do
 2. Open terminal (terminal or console is that black hacker's window where you write commands)
 3. Run command `python3 -m pip install python-dotenv telethon XlsxWriter` (this will install dependencies which are used in the script)
 
+If you have any problems with this 3 steps — try reading [python installation documentation](https://realpython.com/installing-python/#how-to-install-python-on-windows)
+
 ## How to use
 
 1. Add telegram nicknames to search for in `/src/input.txt` file (start nicknames with '@' symbol, every nickname should start with a new line, you can also search by 'telegram id')
