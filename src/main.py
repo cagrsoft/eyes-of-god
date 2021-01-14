@@ -43,6 +43,11 @@ async def repeat_search():
     except Exception as e:
         raise e
 
+async def search_next_contact_with_delay():
+    delay = 5
+    await asyncio.sleep(delay)
+    
+    await search_next_contact()
 
 async def search_next_contact():
     global contacts_to_search
@@ -93,11 +98,11 @@ async def handler(event):
         phone = re.search(r"7\d{10}", msg)
         if phone:
             write_to_output_file(phone.group())
-            await search_next_contact()
+            await search_next_contact_with_delay()
         elif 'Telegram' in msg:
-            await search_next_contact()
+            await search_next_contact_with_delay()
         elif "Данный логин не принадлежит пользователю." in msg:
-            await search_next_contact()
+            await search_next_contact_with_delay()
         elif "Вы слишком часто выполняете это действие." in msg:
             delay = re.search(r"Повторите через (\d)", msg)
             await asyncio.sleep(int(delay.group(1)) + 1)
