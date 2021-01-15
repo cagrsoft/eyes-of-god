@@ -40,31 +40,60 @@ async def search_contact(contact):
     await client.send_message(EyeGodsBot, str("/tg " + currently_searched_contact))
 
 
-async def repeat_search():
+already_searhing = False # only one search can be dalayed per moment
+async def search_contact_with_delay(contact, delay = 3):
+    global already_searhing
+
+    if not already_searhing:
+        already_searhing = True
+
+        if delay > 0:
+            await asyncio.sleep(delay)
+    
+        already_searhing = False
+        await search_contact(contact)
+
+
+async def repeat_search_with_delay(timeout = 0):
+    global currently_searched_contact
     try:
-        global currently_searched_contact
-        await search_contact(currently_searched_contact)
+        await search_contact_with_delay(currently_searched_contact, timeout)
     except Exception as e:
         raise e
 
 
-async def search_next_contact_with_delay():
-    delay = 3
-    await asyncio.sleep(delay)
-    await search_next_contact()
+# async def repeat_search():
+#     global currently_searched_contact
+#     try:
+#         await search_contact(currently_searched_contact)
+#     except Exception as e:
+#         raise e
 
 
-async def search_next_contact():
+async def search_next_contact_with_delay(timeout = 3):
     global search_contacts_list
     try:
         # disconnect when all responses are received and no search_contacts_list left to search
         if len(search_contacts_list) == 0:
-            print("\nDone. Results are in: ", abs_path_to_output_file)
+            print("\n🕵🏿‍♂️ Done. Results are in: ", abs_path_to_output_file)
             await client.disconnect()
         else:
-            await search_contact(search_contacts_list.pop())
+            await search_contact_with_delay(search_contacts_list.pop(), timeout)
     except Exception as e:
         raise e
+
+
+# async def search_next_contact():
+#     global search_contacts_list
+#     try:
+#         # disconnect when all responses are received and no search_contacts_list left to search
+#         if len(search_contacts_list) == 0:
+#             print("\nDone. Results are in: ", abs_path_to_output_file)
+#             await client.disconnect()
+#         else:
+#             await search_contact(search_contacts_list.pop())
+#     except Exception as e:
+#         raise e
 
 
 async def start_search():
@@ -81,7 +110,7 @@ async def start_search():
     except Exception as e:
         raise e
 
-    await search_next_contact()
+    await search_next_contact_with_delay(0)
 
 
 current_xlsx_write_cell = 0
@@ -94,11 +123,11 @@ def write_to_output_file(phone):
     except Exception as e:
         raise e
 
-is_already_waiting = False
+
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 @client.on(events.MessageEdited(from_users=EyeGodsBot))
 async def handler(event):
-    global currently_searched_contact, already_searched_times, is_already_waiting
+    global currently_searched_contact, already_searched_times
 
     msg = event.message.message
     print(msg)
@@ -124,16 +153,11 @@ async def handler(event):
                 time == already_searched_times
 
             if still_waiting_for_analyzing:
-                await repeat_search()
+                await repeat_search_with_delay(0)
 
-        elif "Вы слишком часто выполняете это действие." in msg and not is_already_waiting:
-            is_already_waiting = True
-
+        elif "Вы слишком часто выполняете это действие." in msg:
             wait_for = re.search(r"Повторите через (\d)", msg)
-            await asyncio.sleep(int(wait_for.group(1)) + 1)
-
-            is_already_waiting = False
-            await repeat_search()
+            await repeat_search_with_delay(int(wait_for.group(1)) + 1)
 
         else:
             await search_next_contact_with_delay()
