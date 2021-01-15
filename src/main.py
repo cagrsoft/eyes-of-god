@@ -62,14 +62,6 @@ async def repeat_search_with_delay(timeout = 0):
         raise e
 
 
-# async def repeat_search():
-#     global currently_searched_contact
-#     try:
-#         await search_contact(currently_searched_contact)
-#     except Exception as e:
-#         raise e
-
-
 async def search_next_contact_with_delay(timeout = 3):
     global search_contacts_list
     try:
@@ -83,19 +75,6 @@ async def search_next_contact_with_delay(timeout = 3):
         raise e
 
 
-# async def search_next_contact():
-#     global search_contacts_list
-#     try:
-#         # disconnect when all responses are received and no search_contacts_list left to search
-#         if len(search_contacts_list) == 0:
-#             print("\nDone. Results are in: ", abs_path_to_output_file)
-#             await client.disconnect()
-#         else:
-#             await search_contact(search_contacts_list.pop())
-#     except Exception as e:
-#         raise e
-
-
 async def start_search():
     global search_contacts_list
     search_contacts_list = []
@@ -106,7 +85,6 @@ async def start_search():
             if len(search_contacts_list) == 0:
                 raise Exception(
                     "input.txt file is either empty or doesn't exist.")
-            # else: worksheet.set_column('A:A', search_contacts_list)
     except Exception as e:
         raise e
 

@@ -1,6 +1,6 @@
 *output.txt
 *output.xlsx
-.DS_store
+.DS_Store
 .env
 *.session
 
