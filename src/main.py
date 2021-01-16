@@ -31,7 +31,13 @@ async def search_contact(contact):
     if len(contact) < 5 or len(contact) > 32:
         raise Exception("@username length must be from 5 to 32 symbols")
 
-    global currently_searched_contact, already_searched_times
+    global currently_searched_contact, already_searched_times, searched_same_contact_times
+
+    if currently_searched_contact == contact:
+        searched_same_contact_times += 1
+    else:
+        searched_same_contact_times = 1
+
     currently_searched_contact = contact
     already_searched_times += 1
 
@@ -39,7 +45,7 @@ async def search_contact(contact):
     await client.send_message(EyeGodsBot, str("/tg " + currently_searched_contact))
 
 
-already_searhing = False  # only one search can be dalayed per moment
+already_searhing = False  # only one search can be delayed per moment
 async def search_contact_with_delay(contact, delay=3):
     global already_searhing
 
@@ -55,6 +61,7 @@ async def search_contact_with_delay(contact, delay=3):
 
 async def repeat_search_with_delay(timeout = 0):
     global currently_searched_contact
+    
     try:
         await search_contact_with_delay(currently_searched_contact, timeout)
     except Exception as e:
@@ -103,7 +110,7 @@ def write_to_output_file(phone):
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 @client.on(events.MessageEdited(from_users=EyeGodsBot))
 async def handler(event):
-    global currently_searched_contact, already_searched_times
+    global currently_searched_contact, already_searched_times, searched_same_contact_times
 
     msg = event.message.message
     print(msg)
@@ -129,7 +136,10 @@ async def handler(event):
             )
 
             if still_waiting_for_analyzing:
-                await repeat_search_with_delay(0)
+                if searched_same_contact_times >= 3:
+                    await search_next_contact_with_delay(0)
+                else:
+                    await repeat_search_with_delay(0)
 
         elif "Вы слишком часто выполняете это действие." in msg:
             wait_for = re.search(r"Повторите через (\d)", msg)
