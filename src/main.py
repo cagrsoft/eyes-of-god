@@ -27,6 +27,7 @@ client = TelegramClient("eyes-of-god", api_id, api_hash)
 
 
 already_searched_times = 0
+currently_searched_contact = None
 async def search_contact(contact):
     if len(contact) < 5 or len(contact) > 32:
         raise Exception("@username length must be from 5 to 32 symbols")
@@ -98,7 +99,7 @@ async def start_search():
 
 current_xlsx_write_cell = 0
 def write_to_output_file(phone):
-    global current_xlsx_write_cell
+    global current_xlsx_write_cell, currently_searched_contact
     try:
         worksheet.write(current_xlsx_write_cell, 0, "+" + phone + "\n")
         worksheet.write(current_xlsx_write_cell, 1, currently_searched_contact)
@@ -168,7 +169,7 @@ async def main():
         await client.disconnect()
         print("Error:", str(e))
         print(
-            "Something went wrong 😱😱 Okey, don't panic, just try one more time and hope this message dissapears"
+            "Something went wrong 😱😱 Ok, don't panic, just try one more time and hope this message dissapears"
         )
 
 
