@@ -21,18 +21,24 @@ api_id = tools.get_or_create_dotenv_var(API_ID)
 api_hash = tools.get_or_create_dotenv_var(API_HASH)
 
 abs_path_to_input_file = tools.create_abs_path("input.txt")
-abs_path_to_output_file = tools.create_abs_path(
-    tools.create_output_file_name())
+abs_path_to_output_file = tools.create_abs_path(tools.create_output_file_name())
 
 client = TelegramClient("eyes-of-god", api_id, api_hash)
 
 
 already_searched_times = 0
+currently_searched_contact = None
 async def search_contact(contact):
     if len(contact) < 5 or len(contact) > 32:
         raise Exception("@username length must be from 5 to 32 symbols")
 
-    global currently_searched_contact, already_searched_times
+    global currently_searched_contact, already_searched_times, searched_same_contact_times
+
+    if currently_searched_contact == contact:
+        searched_same_contact_times += 1
+    else:
+        searched_same_contact_times = 1
+
     currently_searched_contact = contact
     already_searched_times += 1
 
@@ -40,8 +46,8 @@ async def search_contact(contact):
     await client.send_message(EyeGodsBot, str("/tg " + currently_searched_contact))
 
 
-already_searhing = False # only one search can be dalayed per moment
-async def search_contact_with_delay(contact, delay = 3):
+already_searhing = False  # only one search can be delayed per moment
+async def search_contact_with_delay(contact, delay=3):
     global already_searhing
 
     if not already_searhing:
@@ -49,13 +55,14 @@ async def search_contact_with_delay(contact, delay = 3):
 
         if delay > 0:
             await asyncio.sleep(delay)
-    
+
         already_searhing = False
         await search_contact(contact)
 
 
 async def repeat_search_with_delay(timeout = 0):
     global currently_searched_contact
+    
     try:
         await search_contact_with_delay(currently_searched_contact, timeout)
     except Exception as e:
@@ -83,8 +90,7 @@ async def start_search():
         with open(abs_path_to_input_file, "r") as file:
             search_contacts_list = file.read().splitlines()
             if len(search_contacts_list) == 0:
-                raise Exception(
-                    "input.txt file is either empty or doesn't exist.")
+                raise Exception("input.txt file is either empty or doesn't exist.")
     except Exception as e:
         raise e
 
@@ -93,7 +99,7 @@ async def start_search():
 
 current_xlsx_write_cell = 0
 def write_to_output_file(phone):
-    global current_xlsx_write_cell
+    global current_xlsx_write_cell, currently_searched_contact
     try:
         worksheet.write(current_xlsx_write_cell, 0, "+" + phone + "\n")
         worksheet.write(current_xlsx_write_cell, 1, currently_searched_contact)
@@ -105,7 +111,7 @@ def write_to_output_file(phone):
 @client.on(events.NewMessage(from_users=EyeGodsBot))
 @client.on(events.MessageEdited(from_users=EyeGodsBot))
 async def handler(event):
-    global currently_searched_contact, already_searched_times
+    global currently_searched_contact, already_searched_times, searched_same_contact_times
 
     msg = event.message.message
     print(msg)
@@ -125,12 +131,15 @@ async def handler(event):
 
             # if global vars are the same as local vars after the sleep
             # this means that nothing have happened, so we need to repeat_search()
-            still_waiting_for_analyzing = \
-                contact == currently_searched_contact and \
-                time == already_searched_times
+            still_waiting_for_analyzing = (
+                contact == currently_searched_contact and time == already_searched_times
+            )
 
             if still_waiting_for_analyzing:
-                await repeat_search_with_delay(0)
+                if searched_same_contact_times >= 3:
+                    await search_next_contact_with_delay(0)
+                else:
+                    await repeat_search_with_delay(0)
 
         elif "Вы слишком часто выполняете это действие." in msg:
             wait_for = re.search(r"Повторите через (\d)", msg)
@@ -145,6 +154,7 @@ async def handler(event):
 
 async def main():
     global worksheet, workbook
+
     try:
         # Create an new Excel file and add a worksheet.
         workbook = xlsxwriter.Workbook(abs_path_to_output_file)
@@ -153,10 +163,13 @@ async def main():
         await client.start()
         await start_search()
         await client.run_until_disconnected()
+
     except Exception as e:
         await client.disconnect()
         print("Error:", str(e))
-        print("Something went wrong 😱😱 Okey, don't panic, just try one more time and hope this message dissapears")
+        print(
+            "Something went wrong 😱😱 Ok, don't panic, just try one more time and hope this message dissapears"
+        )
 
 
 if __name__ == "__main__":
@@ -165,9 +178,12 @@ if __name__ == "__main__":
         print("\n Started searching 🔦 \n")
         print("Press Ctrl+C to stop the script, if needed \n")
         loop.run_until_complete(main())
+
     except FloodWaitError as e:
-        print('Flood waited for', e.seconds)
+        print("Flood waited for", e.seconds)
+
     except (Exception, KeyboardInterrupt) as e:
         print("\n Script has been stopped manually", e)
+
     finally:
         workbook.close()
