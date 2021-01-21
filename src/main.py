@@ -111,10 +111,9 @@ async def handler(event):
     print(msg)
 
     try:
-        phone = re.search(r"7\d{10}", msg)
-
+        phone = re.search(r"Телефон: (\d+)", msg, flags=re.I | re.M)
         if phone:
-            write_to_output_file(phone.group())
+            write_to_output_file(phone.group(1))
             await search_next_contact_with_delay()
 
         elif "Анализируем входящие данные..." in msg:
